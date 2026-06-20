@@ -12,11 +12,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FORMATS } from "@/lib/format";
 import { interpolate, useI18n } from "@/lib/i18n/locale-context";
-import type { Case, JudgeResult, SkillBreakdown } from "@/lib/types";
+import type { Case, JudgeResult } from "@/lib/types";
 import { updateCase } from "@/lib/storage";
 
 interface JudgeSimulatorProps {
@@ -209,7 +208,11 @@ export function JudgeSimulatorPanel({ caseData, onUpdate }: JudgeSimulatorProps)
 
 function JudgeResults({ result }: { result: JudgeResult }) {
   const { t } = useI18n();
-  const skillKeys = Object.keys(t.judge.skills) as Array<keyof SkillBreakdown>;
+  const [showDetailed, setShowDetailed] = useState(false);
+
+  const strengths = result.strengths ?? [];
+  const fixes = result.fixes ?? [];
+  const principles = result.principles ?? [];
 
   return (
     <div className="space-y-4">
@@ -223,69 +226,99 @@ function JudgeResults({ result }: { result: JudgeResult }) {
         </CardContent>
       </Card>
 
-      <Card className="border-border/50">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">{t.judge.skillBreakdown}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {skillKeys.map((skill) => (
-            <div key={skill} className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span>{t.judge.skills[skill]}</span>
-                <span className="font-medium">{result.skillBreakdown[skill]}</span>
-              </div>
-              <Progress value={result.skillBreakdown[skill]} className="h-2" />
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      {result.review && (
+        <Card className="border-border/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">{t.judge.review}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed text-foreground/80">
+              {result.review}
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
-      <Card className="border-green-500/20">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm text-green-400">
-            {t.judge.strengths}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-1">
-            {result.strengths.map((s, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-green-400" />
-                {s}
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+      {strengths.length > 0 && (
+        <Card className="border-green-500/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-green-400">
+              {t.judge.strengths}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-1">
+              {strengths.map((s, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-green-400" />
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
-      <Card className="border-red-500/20">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm text-red-400">
-            {t.judge.weaknesses}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-1">
-            {result.weaknesses.map((w, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
-                {w}
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+      {fixes.length > 0 && (
+        <Card className="border-red-500/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-red-400">
+              {t.judge.fixes}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-1">
+              {fixes.map((f, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
-      <Card className="border-border/50">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">{t.judge.coachFeedback}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm leading-relaxed text-foreground/80">
-            {result.feedback}
-          </p>
-        </CardContent>
-      </Card>
+      {principles.length > 0 && (
+        <Card className="border-amber-500/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-amber-400">
+              {t.judge.principles}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-1">
+              {principles.map((p, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={() => setShowDetailed((v) => !v)}
+      >
+        {showDetailed ? t.judge.hideDetailed : t.judge.showDetailed}
+      </Button>
+
+      {showDetailed && result.detailedFeedback && (
+        <Card className="border-border/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">{t.judge.detailedTitle}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed text-foreground/80">
+              {result.detailedFeedback}
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

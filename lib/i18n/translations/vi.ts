@@ -47,6 +47,10 @@ export const vi: Translations = {
     debateFormat: "Thể thức Tranh biện",
     motion: "Đề bài",
     createCase: "Tạo Vụ án",
+    generateMotion: "Tạo đề",
+    motionTopic: "Chủ đề (tuỳ chọn)",
+    motionTopicPlaceholder: "vd. công nghệ, đạo đức, môi trường",
+    generating: "Đang tạo...",
     badges: {
       analyzed: "Đã phân tích",
       arguments: "Luận điểm",
@@ -68,6 +72,7 @@ export const vi: Translations = {
       clash: "Xung đột",
       rebuttal: "Phản biện",
       judge: "Trọng tài",
+      train: "Luyện tập",
     },
   },
   format: {
@@ -172,10 +177,14 @@ export const vi: Translations = {
     placeholderCrystallization: "Bài tổng kết / reply 4 phút của bạn...",
     judgeMySpeech: "Chấm Bài của tôi",
     empty: "Nộp bài phát biểu để được chấm kỹ năng tranh biện",
+    review: "Nhận xét",
+    strengths: "Làm tốt điều gì",
+    fixes: "Cần sửa gì",
+    principles: "Nguyên tắc tranh biện",
     skillBreakdown: "Phân tích Kỹ năng",
-    strengths: "Điểm mạnh",
-    weaknesses: "Điểm yếu",
-    coachFeedback: "Phản hồi Huấn luyện",
+    showDetailed: "Xem phản hồi chi tiết",
+    hideDetailed: "Ẩn phản hồi chi tiết",
+    detailedTitle: "Phản hồi chi tiết",
     skills: {
       logic: "Logic",
       rebuttal: "Phản biện",
@@ -197,6 +206,7 @@ export const vi: Translations = {
     speechJudged: "Đã chấm bài phát biểu",
     enterOpponentArgument: "Hãy nhập luận điểm đối thủ trước",
     enterSpeechSection: "Hãy nhập ít nhất một phần bài phát biểu để chấm",
+    motionGenerated: "Đã tạo đề bài",
   },
   errors: {
     analyzeMotion: "Không thể phân tích đề bài",
@@ -204,5 +214,167 @@ export const vi: Translations = {
     generateClashMap: "Không thể tạo bản đồ xung đột",
     generateRebuttals: "Không thể tạo phản biện",
     judgeSpeech: "Không thể chấm bài phát biểu",
+    coach: "Không thể nhận hướng dẫn",
+    generateMotion: "Không thể tạo đề bài",
+  },
+  train: {
+    badge: "Luyện tập",
+    setup: {
+      title: "Luyện theo vai diễn giả",
+      subtitle:
+        "Chọn phe và vai diễn giả bạn theo. Bạn sẽ làm bài tập từng bước — bạn viết, huấn luyện viên phản hồi, bạn chỉnh sửa.",
+      chooseSide: "Bạn thuộc phe nào?",
+      chooseRole: "Bạn theo diễn giả nào?",
+      comingSoon: "Sắp ra mắt",
+      start: "Bắt đầu Luyện tập",
+      roles: {
+        first: {
+          label: "Diễn giả 1",
+          blurb: "Khung sườn: hiểu đề, đánh đổi, nhóm liên quan, cơ chế.",
+        },
+        second: {
+          label: "Diễn giả 2",
+          blurb: "Luận điểm, lập luận, bằng chứng và phản biện.",
+        },
+        third: {
+          label: "Diễn giả 3",
+          blurb: "Xung đột, phản-phản biện và cân trọng.",
+        },
+      },
+    },
+    overview: {
+      title: "Lộ trình luyện tập",
+      role: "Vai",
+      side: "Phe",
+      progressLabel: "{completed} / {total} bài tập",
+      skillGrowth: "Tiến bộ Kỹ năng",
+      skillGrowthEmpty: "Hoàn thành bài tập để thấy kỹ năng tiến bộ.",
+    },
+    stepper: {
+      lockedHint: "Hoàn thành bước trước để mở khoá bước này.",
+      bestScore: "Cao nhất {score}",
+      locked: "Đã khoá",
+      inProgress: "Đang làm",
+      complete: "Hoàn thành",
+    },
+    panel: {
+      submit: "Nhận Hướng dẫn",
+      resubmit: "Sửa & Nộp lại",
+      markComplete: "Đánh dấu hoàn thành",
+      continueNext: "Tiếp tục",
+      history: "Các lần thử trước",
+      attemptN: "Lần {n}",
+      blankGuard: "Hãy điền câu trả lời trước khi nhận hướng dẫn.",
+    },
+    feedback: {
+      score: "Điểm",
+      checklist: "Danh sách kiểm",
+      strengths: "Điểm tốt",
+      fixes: "Cần sửa",
+      coaching: "Huấn luyện viên",
+      passed: "Đạt — làm tốt lắm!",
+      keepRefining: "Tiếp tục chỉnh sửa và nộp lại.",
+    },
+    skills: {
+      analysis: "Phân tích",
+      logic: "Logic",
+      weighing: "Cân trọng",
+      rebuttal: "Phản biện",
+      evidence: "Bằng chứng",
+    },
+    toasts: {
+      started: "Đã bắt đầu luyện tập — bắt đầu thôi!",
+      scored: "Phản hồi đã sẵn sàng",
+      complete: "Hoàn thành bài tập!",
+    },
+    exercises: {
+      interpretation: {
+        title: "Hiểu Đề bài",
+        blurb: "Định nghĩa thuật ngữ, nêu gánh nặng và giới hạn tranh luận.",
+        fields: {
+          defendThis: {
+            label: "Phe bạn phải chứng minh điều gì?",
+            placeholder: "Với đề này, phe mình phải cho thấy rằng...",
+          },
+          keyTerms: {
+            label: "Định nghĩa thuật ngữ chính",
+            placeholder: "Khi nói '...' chúng tôi nghĩa là...",
+          },
+          scope: {
+            label: "Phạm vi — gồm gì và không gồm gì?",
+            placeholder: "Cuộc tranh luận này về... KHÔNG phải về...",
+          },
+        },
+        criteria: {
+          termsDefined: "Thuật ngữ chính được định nghĩa rõ",
+          burdenCorrect: "Nêu được điều phe mình phải chứng minh",
+          scopeBounded: "Giới hạn rõ trong và ngoài phạm vi",
+        },
+      },
+      tradeoff: {
+        title: "Định khung Đánh đổi",
+        blurb:
+          "Nêu điều phe bạn tối ưu sau cùng và đánh đổi mà phe chấp nhận để đạt được.",
+        fields: {
+          ultimateGoal: {
+            label: "Mục tiêu tối thượng của phe bạn",
+            placeholder: "Trên hết, phe mình bảo vệ / tối đa hoá...",
+          },
+          tradeoff: {
+            label: "Đánh đổi mà bạn chấp nhận",
+            placeholder: "Chúng tôi ưu tiên ... dù phải đánh đổi ...",
+          },
+        },
+        criteria: {
+          goalMatchesSide: "Mục tiêu hợp với phe bạn",
+          tradeoffIsRealTension: "Đánh đổi thực sự (được gì vs mất gì)",
+          notVague: "Cụ thể, không chung chung",
+        },
+      },
+      stakeholders: {
+        title: "Xây dựng Nhóm liên quan",
+        blurb:
+          "Chọn một nhóm bị đề bài ảnh hưởng và mô tả đặc điểm khiến họ quan trọng.",
+        fields: {
+          stakeholder: {
+            label: "Nhóm liên quan",
+            placeholder: "vd. sinh viên thế hệ đầu vào đại học",
+          },
+          traits: {
+            label: "Đặc điểm — vì sao họ quan trọng ở đây?",
+            placeholder: "Họ là... nên đề bài ảnh hưởng họ bằng cách...",
+          },
+        },
+        criteria: {
+          isGroupNotActor: "Là nhóm bị ảnh hưởng, không phải bên hành động",
+          traitsExplainStake: "Đặc điểm giải thích vì sao họ quan trọng",
+          relevantToMotion: "Liên quan đến đề bài này",
+        },
+      },
+      mechanism: {
+        title: "Xây dựng Cơ chế",
+        blurb:
+          "Biến luận điểm thành chuỗi nhân-quả dẫn tới tác động cụ thể.",
+        fields: {
+          claim: {
+            label: "Luận điểm (một câu)",
+            placeholder: "Phe mình tin rằng...",
+          },
+          mechanism: {
+            label: "Cơ chế (điều đó xảy ra thế nào?)",
+            placeholder: "Vì..., người ta..., dẫn đến...",
+          },
+          impact: {
+            label: "Tác động (kết quả thực tế)",
+            placeholder: "Kết quả là, trong thực tế...",
+          },
+        },
+        criteria: {
+          mechanismDiffersFromClaim: "Cơ chế giải thích cách, không lặp luận điểm",
+          causalChainPresent: "Chuỗi nhân-quả rõ ràng",
+          impactConcrete: "Tác động thực tế cụ thể",
+        },
+      },
+    },
   },
 };

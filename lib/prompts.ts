@@ -82,15 +82,26 @@ CONSTRUCTIVE (${speechTime}):`,
     judgeRebuttal: "REBUTTAL:",
     judgeCrystal: (crystalTime: string) => `CRYSTALLIZATION (${crystalTime}):`,
     notProvided: "(not provided)",
-    judgeRubric: `Score using the skill rubric (logic, rebuttal, weighing, analysis, evidence — each 0-100).
-Give 2-3 specific strengths referencing the student's text.
-Give 2-3 specific weaknesses with actionable fixes.
-Overall score = average of the 5 skills, rounded to nearest integer.
-Provide constructive coaching feedback in 2-3 sentences.`,
+    judgeRubric: `The example above is for a DIFFERENT motion and only shows the format — DO NOT reuse its wording. Judge ONLY the student's speech above, quoting their actual words.
+Judge the speech on logic, rebuttal, weighing, analysis, and evidence, then fill these fields:
+- score: a REQUIRED overall rating 0-100 of how well the student did (a real speech is rarely below 40; only use 0 if nothing was submitted).
+- review: a CONCISE 2-3 sentence overall review.
+- strengths: 2-3 specific things the student did great (reference their text).
+- fixes: 2-3 specific things to fix, each actionable.
+- principles: 0-3 debate principles the student should study — only if relevant, otherwise an empty array.
+- detailedFeedback: one longer paragraph of deeper analysis the student can read if they want more detail.`,
     judgeWscNote:
       "WSC: Evaluate as a single 4-minute speech. No separate crystallization.",
     fillFields: "Now fill in each JSON field for the motion above using these steps:",
     motionLabel: "Motion",
+    motionGenTask:
+      'TASK: Invent ONE fresh, original debate motion. Return JSON {"motion": "..."}.',
+    motionGenRules: (prefix: string, theme: string) =>
+      `Rules:
+- The motion MUST begin with one of these prefixes: ${prefix}
+- Topic area: ${theme}
+- Make it BALANCED so both sides can win, specific, debatable, and appropriate for students.
+- Do NOT reuse a famous textbook motion — write a brand new one.`,
   },
   vi: {
     motionTask: "NHIỆM VỤ: Phân tích đề tranh biện này và trả về JSON.",
@@ -157,16 +168,27 @@ XÂY DỰNG (${speechTime}):`,
     judgeRebuttal: "PHẢN BIỆN:",
     judgeCrystal: (crystalTime: string) => `TỔNG KẾT (${crystalTime}):`,
     notProvided: "(chưa cung cấp)",
-    judgeRubric: `Chấm theo thang kỹ năng (logic, rebuttal, weighing, analysis, evidence — mỗi mục 0-100).
-Đưa 2-3 điểm mạnh cụ thể tham chiếu văn bản học sinh.
-Đưa 2-3 điểm yếu cụ thể với cách sửa hành động được.
-Điểm tổng = trung bình 5 kỹ năng, làm tròn số nguyên.
-Đưa phản hồi huấn luyện mang tính xây dựng trong 2-3 câu.`,
+    judgeRubric: `Ví dụ ở trên là cho một đề KHÁC và chỉ minh hoạ định dạng — KHÔNG dùng lại lời văn của nó. CHỈ chấm bài phát biểu của học sinh ở trên, trích dẫn đúng lời của họ.
+Chấm bài dựa trên logic, rebuttal, weighing, analysis, evidence, rồi điền các trường:
+- score: điểm tổng BẮT BUỘC 0-100 đánh giá học sinh làm tốt thế nào (bài thật hiếm khi dưới 40; chỉ dùng 0 nếu không nộp gì).
+- review: nhận xét tổng quan SÚC TÍCH 2-3 câu.
+- strengths: 2-3 điều cụ thể học sinh làm tốt (tham chiếu văn bản của họ).
+- fixes: 2-3 điều cụ thể cần sửa, mỗi điều hành động được.
+- principles: 0-3 nguyên tắc tranh biện học sinh nên học — chỉ khi liên quan, nếu không thì mảng rỗng.
+- detailedFeedback: một đoạn dài hơn phân tích sâu để học sinh đọc nếu muốn chi tiết.`,
     judgeWscNote:
       "WSC: Chấm như một bài phát biểu 4 phút duy nhất. Không có tổng kết riêng.",
     fillFields:
       "Bây giờ điền từng trường JSON cho đề bài trên theo các bước:",
     motionLabel: "Đề bài",
+    motionGenTask:
+      'NHIỆM VỤ: Sáng tạo MỘT đề tranh biện mới, độc đáo. Trả về JSON {"motion": "..."}.',
+    motionGenRules: (prefix: string, theme: string) =>
+      `Quy tắc:
+- Đề PHẢI bắt đầu bằng một trong các tiền tố: ${prefix}
+- Lĩnh vực chủ đề: ${theme}
+- Làm cho đề CÂN BẰNG để cả hai phe đều có thể thắng, cụ thể, tranh luận được và phù hợp học sinh.
+- KHÔNG dùng lại đề kinh điển — viết đề hoàn toàn mới.`,
   },
 } as const;
 
@@ -272,6 +294,26 @@ ${s.rebuttalSteps}
 ${timeNote}`;
 }
 
+// Focused system prompt for motion generation — the full coach handbook is
+// overkill and distracts the 3B model from the one job here.
+export const MOTION_GEN_SYSTEM =
+  "You write balanced, original debate motions for students. Output raw JSON only — no markdown, no commentary.";
+
+export function motionGenPrompt(
+  format: DebateFormat = "wsdc",
+  theme: string,
+  locale: Locale = "en"
+): string {
+  const config = FORMATS[format];
+  const s = strings(locale);
+
+  return `${formatBlock(format, locale)}
+
+${s.motionGenTask}
+
+${s.motionGenRules(config.motionPrefix, theme)}`;
+}
+
 export function judgePrompt(
   motion: string,
   caseText: string,
@@ -290,9 +332,9 @@ ${s.judgeWsc(config.speechTime, config.prepTime)}
 
 ${caseText || rebuttalText || s.notProvided}
 
-${judgeExampleBlock()}
-
 ${s.judgeRubric}
+
+${judgeExampleBlock()}
 
 ${s.judgeWscNote}`;
   }
@@ -308,8 +350,8 @@ ${rebuttalText || s.notProvided}
 ${s.judgeCrystal(config.crystallizationTime!)}
 ${summaryText || s.notProvided}
 
-${judgeExampleBlock()}
+${s.judgeRubric}
 
-${s.judgeRubric}`;
+${judgeExampleBlock()}`;
 }
 

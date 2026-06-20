@@ -90,27 +90,24 @@ export const REBUTTAL_EXAMPLE = {
   ],
 };
 
+// A skeletal TEMPLATE, not real feedback. A 3B model copies concrete example
+// content verbatim (about the wrong motion), but it cannot produce this
+// structure with no example at all — so we give it the shape with placeholders
+// that describe what to write, and the judge prompt tells it to replace every
+// placeholder with content about the student's actual speech.
 export const JUDGE_EXAMPLE = {
+  score: 70,
+  review: "<2-3 sentences summarizing how THIS speech did>",
   strengths: [
-    "Clear claim-mechanism-impact structure in the constructive",
-    "Identified the core clash between learning and measurement",
-    "Used a specific example about cramming behavior",
+    "<a specific thing THIS speech did well, quoting it>",
+    "<another specific strength of THIS speech>",
   ],
-  weaknesses: [
-    "No comparative weighing against opposition impacts",
-    "Missing stakeholder analysis beyond students",
-    "Rebuttal did not engage with the employer accountability argument",
+  fixes: [
+    "<a specific, actionable fix for THIS speech>",
+    "<another specific fix>",
   ],
-  score: 72,
-  skillBreakdown: {
-    logic: 78,
-    rebuttal: 65,
-    weighing: 55,
-    analysis: 80,
-    evidence: 60,
-  },
-  feedback:
-    "Your constructive shows good logical structure. Focus next on weighing — explain why your learning-quality impact outweighs the opposition's accountability concerns. Engage directly with employer hiring arguments in rebuttal.",
+  principles: ["<a debate principle to study, or leave this array empty>"],
+  detailedFeedback: "<a longer paragraph analyzing THIS speech in depth>",
 };
 
 function formatExample(label: string, example: unknown): string {
@@ -147,7 +144,7 @@ export function rebuttalExampleBlock(): string {
 
 export function judgeExampleBlock(): string {
   return formatExample(
-    "Here is an example of correct output for a similar task",
+    "Fill this TEMPLATE — replace every <...> placeholder with feedback about the student's ACTUAL speech. Do not output the placeholders",
     JUDGE_EXAMPLE
   );
 }

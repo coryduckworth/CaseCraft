@@ -8,6 +8,7 @@ import {
   Brain,
   GitBranch,
   Gavel,
+  GraduationCap,
   Hammer,
   Swords,
 } from "lucide-react";
@@ -20,6 +21,7 @@ import { ArgumentForgePanel } from "@/components/case/argument-forge";
 import { ClashMapPanel } from "@/components/case/clash-map";
 import { RebuttalArenaPanel } from "@/components/case/rebuttal-arena";
 import { JudgeSimulatorPanel } from "@/components/case/judge-simulator";
+import { TrainPanel } from "@/components/case/train/train-panel";
 import { FormatBadge, FormatSelector } from "@/components/case/format-selector";
 import {
   getLocalizedFormatSummary,
@@ -30,6 +32,7 @@ import type { DebateFormat } from "@/lib/types";
 import { getCase, updateCase } from "@/lib/storage";
 
 const tabIcons = {
+  train: GraduationCap,
   analysis: Brain,
   arguments: Hammer,
   clash: GitBranch,
@@ -48,6 +51,7 @@ export default function CasePage() {
   const { t } = useI18n();
 
   const tabs: { id: TabId; label: string }[] = [
+    { id: "train", label: t.case.tabs.train },
     { id: "analysis", label: t.case.tabs.analysis },
     { id: "arguments", label: t.case.tabs.arguments },
     { id: "clash", label: t.case.tabs.clash },
@@ -128,7 +132,7 @@ export default function CasePage() {
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-8">
-        <Tabs defaultValue="analysis">
+        <Tabs defaultValue="train">
           <TabsList className="mb-6 w-full justify-start overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tabIcons[tab.id];
@@ -141,6 +145,9 @@ export default function CasePage() {
             })}
           </TabsList>
 
+          <TabsContent value="train">
+            <TrainPanel caseData={caseData} />
+          </TabsContent>
           <TabsContent value="analysis">
             <MotionAnalysisPanel caseData={caseData} onUpdate={() => {}} />
           </TabsContent>

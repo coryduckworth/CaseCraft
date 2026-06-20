@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FormatBadge } from "@/components/case/format-selector";
-import { formatRelativeTime, useI18n } from "@/lib/i18n/locale-context";
+import { formatRelativeTime, interpolate, useI18n } from "@/lib/i18n/locale-context";
+import { getCompletion } from "@/lib/curriculum/progress";
 import type { Case } from "@/lib/types";
 
 interface CaseCardProps {
@@ -23,6 +24,7 @@ export function CaseCard({ caseData }: CaseCardProps) {
   const hasAnalysis = !!caseData.analysis;
   const hasArguments = !!caseData.arguments;
   const hasClash = !!caseData.clashMap;
+  const training = caseData.training ? getCompletion(caseData) : null;
 
   return (
     <Link href={`/case/${caseData.id}`}>
@@ -46,6 +48,14 @@ export function CaseCard({ caseData }: CaseCardProps) {
         <CardContent>
           <div className="flex flex-wrap gap-1.5">
             <FormatBadge format={caseData.format ?? "wsdc"} />
+            {training && (
+              <Badge className="bg-amber-500/10 text-xs text-amber-500">
+                {t.train.badge} {interpolate(t.train.overview.progressLabel, {
+                  completed: training.completed,
+                  total: training.total,
+                })}
+              </Badge>
+            )}
             {hasAnalysis && (
               <Badge variant="secondary" className="text-xs">
                 {t.dashboard.badges.analyzed}

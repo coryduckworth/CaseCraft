@@ -28,7 +28,10 @@ interface ChatCompletionResponse {
   error?: { message?: string };
 }
 
-async function callOllama(messages: ChatMessage[]): Promise<string> {
+async function callOllama(
+  messages: ChatMessage[],
+  temperature = 0.2
+): Promise<string> {
   const { baseUrl, model } = getConfig();
   const url = `${baseUrl.replace(/\/$/, "")}/chat/completions`;
 
@@ -40,7 +43,7 @@ async function callOllama(messages: ChatMessage[]): Promise<string> {
       body: JSON.stringify({
         model,
         messages,
-        temperature: 0.2,
+        temperature,
         stream: false,
         format: "json",
         options: {
@@ -76,7 +79,8 @@ async function callOllama(messages: ChatMessage[]): Promise<string> {
 export async function generateStructured<T>(
   prompt: string,
   schema: z.ZodType<T>,
-  systemPrompt: string
+  systemPrompt: string,
+  temperature = 0.2
 ): Promise<T> {
   const jsonSchema = zodToJsonSchema(
     schema as unknown as Parameters<typeof zodToJsonSchema>[0]
@@ -96,7 +100,7 @@ ${JSON.stringify(jsonSchema, null, 2)}`;
   let lastError = "";
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const raw = await callOllama(messages);
+    const raw = await callOllama(messages, temperature);
     lastRaw = raw;
 
     const result = parseAndValidate(raw, schema);
